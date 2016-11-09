@@ -1,0 +1,21 @@
+Begin3
+Title:		tp_automated_watering
+Version:	@VERSION@
+Entered-date:	@ISODATE@
+Description:	
+		@configure_input@
+		Please edit tp_automated_watering.lsm.in to fix the Keywords and
+		Primary-site entries, add several more lines of
+		description here if appropriate, and to delete these
+		instructions.
+Keywords:	[substitute your keywords here]
+Author: 	bruno.buiret@etu.univ-lyon1.fr (Bruno Buiret)
+Maintained-by:	bruno.buiret@etu.univ-lyon1.fr (Bruno Buiret)
+Primary-site:	metlab.unc.edu pub/Linux/apps/some/directory
+		31k tp_automated_watering-@VERSION@.tar.gz
+		500  tp_automated_watering.lsm
+Alternate-site: 
+Original-site:  
+Platforms:      
+Copying-policy:	GNU copyleft
+End
