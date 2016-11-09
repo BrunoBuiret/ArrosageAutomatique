@@ -1,5 +1,11 @@
 /* Prototypes for functions defined in xmalloc.c  */
 
+#if __STDC__
+# define VOID void
+#else
+# define VOID char
+#endif
+
 VOID *xmalloc (size_t n);
 VOID *xcalloc (size_t n, size_t s);
 VOID *xrealloc (VOID *p, size_t n);

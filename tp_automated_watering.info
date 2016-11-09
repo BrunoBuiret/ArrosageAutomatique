@@ -1,5 +1,5 @@
 This is tp_automated_watering.info, produced by makeinfo version 5.2
-from tp_automated_watering.texinfo.
+from tp_automated_watering.texi.
 
 This file documents the 'tp_automated_watering' command which
 
@@ -445,7 +445,7 @@ Here are some realistic examples of running 'tp_automated_watering'.
            --usage                Give a short usage message
        -V, --version              Print program version
 
-     Report bugs to <bruno.buireetu.univ-lyon1.fr>.
+     Report bugs to <bruno.buiret@etu.univ-lyon1.fr>.
 
 
 File: tp_automated_watering.info,  Node: Invoking tp_automated_watering,  Next: Problems,  Prev: Sample,  Up: Top
@@ -479,14 +479,14 @@ File: tp_automated_watering.info,  Node: Problems,  Next: Concept Index,  Prev: 
 ****************
 
 If you find a bug in 'tp_automated_watering', please send electronic
-mail to <bruno.buireetu.univ-lyon1.fr>.  Include the version number,
+mail to <bruno.buiret@etu.univ-lyon1.fr>.  Include the version number,
 which you can find by running 'tp_automated_watering --version'.  Also
 include in your message the output that the program produced and the
 output you expected.
 
    If you have other questions, comments or suggestions about
 'tp_automated_watering', contact the author via electronic mail to
-<bruno.buireetu.univ-lyon1.fr>.  The author will try to help you out,
+<bruno.buiret@etu.univ-lyon1.fr>.  The author will try to help you out,
 although he may not have time to fix your problems.
 
 
@@ -523,13 +523,13 @@ Concept Index
 
 
 Tag Table:
-Node: Top865
-Node: Instructions1488
-Node: Copying2005
-Node: Overview21183
-Node: Sample21652
-Node: Invoking tp_automated_watering22308
-Node: Problems22942
-Node: Concept Index23653
+Node: Top862
+Node: Instructions1485
+Node: Copying2002
+Node: Overview21180
+Node: Sample21649
+Node: Invoking tp_automated_watering22307
+Node: Problems22941
+Node: Concept Index23656
 
 End Tag Table

@@ -131,7 +131,7 @@ Usage: tp_automated_watering [OPTION...] [FILE...]
       --usage                Give a short usage message
   -V, --version              Print program version
 
-Report bugs to <bruno.buiret@etu.univ-lyon1.fr>.
+Report bugs to <bruno.buiret@@etu.univ-lyon1.fr>.
 @end example
 
 @node Invoking tp_automated_watering, Problems, Sample, Top
@@ -173,13 +173,13 @@ and then exit successfully.
 @cindex problems
 
 If you find a bug in @command{tp_automated_watering}, please send electronic mail to
-@email{bruno.buiret@etu.univ-lyon1.fr}.  Include the version number, which you can find by
+@email{bruno.buiret@@etu.univ-lyon1.fr}.  Include the version number, which you can find by
 running @w{@samp{tp_automated_watering --version}}.  Also include in your message the
 output that the program produced and the output you expected.@refill
 
 If you have other questions, comments or suggestions about
 @command{tp_automated_watering}, contact the author via electronic mail to
-@email{bruno.buiret@etu.univ-lyon1.fr}.  The author will try to help you out, although he
+@email{bruno.buiret@@etu.univ-lyon1.fr}.  The author will try to help you out, although he
 may not have time to fix your problems.
 
 @node Concept Index,  , Problems, Top

@@ -66,12 +66,12 @@ void automaton_destroy(Automaton **a)
     *a = NULL;
 }
 
-void automaton_get_zones_number(const Automaton *a)
+unsigned short automaton_get_zones_number(const Automaton *a)
 {
     return a->zonesNumber;
 }
 
-void automaton_get_lamp_output(const Automaton *a, unsigned int zoneIndex)
+unsigned int automaton_get_lamp_output(const Automaton *a, unsigned int zoneIndex)
 {
     assert(zoneIndex < a->zonesNumber);
     
@@ -103,7 +103,7 @@ void automaton_set_lamp_value(Automaton *a, unsigned int zoneIndex, int value)
     a->lampsValues[zoneIndex] = value;
 }
 
-void automaton_get_valve_output(const Automaton *a, unsigned int zoneIndex)
+unsigned int automaton_get_valve_output(const Automaton *a, unsigned int zoneIndex)
 {
     assert(zoneIndex < a->zonesNumber);
     
@@ -216,15 +216,22 @@ void automaton_dump_state(const Automaton *a, const char *path)
     
     for(i = 0; i < a->zonesNumber; i++)
     {
-        fprintf(file, "lamp_%u = %s\n", i, automaton_get_lamp_value(i) == HIGH ? "true" : "false");
+        fprintf(file, "lamp_%u = %s\n", i, automaton_get_lamp_value(a, i) == HIGH ? "true" : "false");
     }
     
     fprintf(file, "[valves]\n");
     
     for(i = 0; i < a->zonesNumber; i++)
     {
-        
+        fprintf(file, "valve_%u = %s\n", i, automaton_get_valve_value(a, i) == HIGH ? "true" : "false");
     }
+    
+    fprintf(file, "[sensors]\n");
+    fprintf(file, "not_enough_water = %s\n", automaton_read_water_level(a) == HIGH ? "true" : "false");
+    fprintf(file, "flow = %s\n", "?");
+    
+    fprintf(file, "[pump]\n");
+    fprintf(file, "pump = %s\n", automaton_get_pump_value(a) == HIGH ? "true" : "false");
     
     // Close file
     fclose(file);

@@ -106,7 +106,7 @@ am__dirstamp = $(am__leading_dot)dirstamp
 am_tp_automated_watering_OBJECTS = tp_automated_watering.$(OBJEXT) \
 	src/automaton.$(OBJEXT) src/xmalloc.$(OBJEXT)
 tp_automated_watering_OBJECTS = $(am_tp_automated_watering_OBJECTS)
-tp_automated_watering_LDADD = $(LDADD)
+tp_automated_watering_DEPENDENCIES =
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -348,12 +348,15 @@ target_alias =
 top_build_prefix = 
 top_builddir = .
 top_srcdir = .
+
+# automake options
 AUTOMAKE_OPTIONS = subdir-objects
 tp_automated_watering_SOURCES = tp_automated_watering.c src/automaton.c src/xmalloc.c system.h aclocal.m4 tp_automated_watering.1
+tp_automated_watering_LDADD = -lwiringPi
 
 #  uncomment the following if tp_automated_watering requires the math library
 #tp_automated_watering_LDADD=-lm
-EXTRA_DIST = tp_automated_watering.lsm.in tp_automated_watering.spec.in tp_automated_watering.texinfo
+EXTRA_DIST = tp_automated_watering.lsm.in tp_automated_watering.spec.in tp_automated_watering.texi
 
 #  if you write a self-test script named `chk', uncomment the
 #  following and add `chk' to the EXTRA_DIST list
