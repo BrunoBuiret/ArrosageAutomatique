@@ -27,6 +27,7 @@
 #include <sys/types.h>
 #include <stdbool.h>
 #include <argp.h>
+#include <wiringPi.h>
 #include "system.h"
 #include "src/automaton.h"
 #include "src/utils.h"
@@ -104,6 +105,8 @@ main (int argc, char **argv)
           // Turn off a lamp
           if(is_file(actions_path(lamp, i, off)))
           {
+              // Turn down the pin output
+              automaton_set_lamp_value(a, i, LOW);
               
               // Get rid of the file
               unlink(actions_path(lamp, i, off));
@@ -111,9 +114,29 @@ main (int argc, char **argv)
           // Turn of a lamp
           else if(is_file(actions_path(lamp, i, on)))
           {
+              // Turn up the pin output
+              automaton_set_lamp_value(a, i, HIGH);
               
               // Get rid of the file
               unlink(actions_path(lamp, i, on));
+          }
+          // Close a valve
+          else if(is_file(actions_path(valve, i, off)))
+          {
+              // Turn down the pin output
+              automaton_set_valve_value(a, i, LOW);
+              
+              // Get rid of the file
+              unlink(actions_path(valve, i, off));
+          }
+          // Open a valve
+          else if(is_file(actions_path(valve, i, on)))
+          {
+              // Turn up the pin output
+              automaton_set_valve_value(a, i, HIGH);
+              
+              // Get rid of the file
+              unlink(actions_path(valve, i, on));
           }
       }
       
