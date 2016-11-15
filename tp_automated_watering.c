@@ -22,12 +22,18 @@
 #include <pwd.h>
 */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
+#include <stdbool.h>
 #include <argp.h>
 #include "system.h"
+#include "src/automaton.h"
+#include "src/utils.h"
 
-#define EXIT_FAILURE 1
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 #if ENABLE_NLS
 # include <libintl.h>
@@ -38,9 +44,7 @@
 #endif
 #define N_(Text) Text
 
-char *xmalloc ();
-char *xrealloc ();
-char *xstrdup ();
+#define actions_path(path) "/var/www/html/data/" #path
 
 static error_t parse_opt (int key, char *arg, struct argp_state *state);
 static void show_version (FILE *stream, struct argp_state *state);
@@ -73,10 +77,55 @@ main (int argc, char **argv)
 {
   textdomain(PACKAGE);
   argp_parse(&argp, argc, argv, 0, NULL, NULL);
+  
+  // Initialize vars
+  bool isRunning = true;
+  unsigned int i, j;
 
-  /* TODO: do the work */
+  // Initialize the automaton
+  Automaton *a = automaton_new(2);
+  
+  automaton_set_pump_output(a, 24);
+  automaton_set_water_volume_input(12);
+  automaton_set_water_level_input(15);
+  
+  automaton_set_lamp_output(a, 0, 16);
+  automaton_set_valve_output(a, 0, 18);
+  
+  automaton_set_lamp_output(a, 1, 22);
+  automaton_set_valve_output(a, 1, 7);
+  
+  // 
+  while(isRunning)
+  {
+      // Does the user want something to be done?
+      for(i = 0, j = automaton_get_zones_number(a); i < j; i++)
+      {
+          // Turn off a lamp
+          if(is_file(actions_path(lamp, i, off)))
+          {
+              
+              // Get rid of the file
+              unlink(actions_path(lamp, i, off));
+          }
+          // Turn of a lamp
+          else if(is_file(actions_path(lamp, i, on)))
+          {
+              
+              // Get rid of the file
+              unlink(actions_path(lamp, i, on));
+          }
+      }
+      
+#ifdef HAVE_UNISTD_H
+      sleep(1);
+#endif
+  }
+  
+  // Destroy the automaton so as to free the memory
+  automaton_destroy(&a);
 
-  exit (0);
+  return EXIT_SUCCESS;
 }
 
 /* Parse a single option.  */
