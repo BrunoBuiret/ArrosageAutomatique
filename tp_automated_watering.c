@@ -77,7 +77,7 @@ main (int argc, char **argv)
 {
   textdomain(PACKAGE);
   argp_parse(&argp, argc, argv, 0, NULL, NULL);
-  wiringPiSetup();
+  // wiringPiSetup();
   
   // Initialize vars
   bool isRunning = true;
@@ -156,6 +156,7 @@ main (int argc, char **argv)
               // Log action
               printf("Trying to open valve #%u.\n", i + 1);
               
+              /*
               if(automaton_read_water_level(a) == LOW)
               {
                   // Open valve file
@@ -213,6 +214,7 @@ main (int argc, char **argv)
               {
                 fprintf(stderr, "Not enough water to hydrate zone #%u.\n", i + 1);
               }
+              */
               
               // Get rid of the file
               unlink(valveOnPath);
@@ -226,7 +228,7 @@ main (int argc, char **argv)
       }
       
       // Dump current automaton's state
-      automaton_dump_state(a, "/var/www/html/data/automaton.ini");
+      // automaton_dump_state(a, "/var/www/html/data/automaton.ini");
       
 #ifdef HAVE_UNISTD_H
       sleep(1);
