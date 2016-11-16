@@ -77,7 +77,7 @@ fixup_null_alloc (n)
     {
       /* possible revisions: release some memory and re-try, print
 	 more information (e.g. line number of input file) */
-      fprintf(stderr, _("tp_automated_watering: Memory exhausted"));
+      fprintf(stderr, _("tp_automated_watering: Memory exhausted in file \"%s\" near line %u.\n"), __FILE__, __LINE__);
       exit(1);
     }
   return p;

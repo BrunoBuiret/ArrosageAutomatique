@@ -216,14 +216,14 @@ void automaton_dump_state(const Automaton *a, const char *path)
     
     for(i = 0; i < a->zonesNumber; i++)
     {
-        fprintf(file, "lamp_%u = %s\n", i, automaton_get_lamp_value(a, i) == HIGH ? "true" : "false");
+        fprintf(file, "lamp_%u = %s\n", i + 1, automaton_get_lamp_value(a, i) == HIGH ? "true" : "false");
     }
     
     fprintf(file, "[valves]\n");
     
     for(i = 0; i < a->zonesNumber; i++)
     {
-        fprintf(file, "valve_%u = %s\n", i, automaton_get_valve_value(a, i) == HIGH ? "true" : "false");
+        fprintf(file, "valve_%u = %s\n", i + 1, automaton_get_valve_value(a, i) == HIGH ? "true" : "false");
     }
     
     fprintf(file, "[sensors]\n");

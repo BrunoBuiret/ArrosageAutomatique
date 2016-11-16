@@ -10,7 +10,20 @@
 
 #include <stdbool.h>
 
+/**
+ *
+ */
 bool is_file(const char *path);
+
+/**
+ *
+ */
+char* actions_path(const char *type, unsigned int i, const char *action);
+
+/**
+ *
+ */
+char* uint_to_string(unsigned int input);
 
 #endif /* UTILS_H */
 

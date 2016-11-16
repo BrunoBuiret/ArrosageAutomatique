@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <stdbool.h>
+#include <time.h>
 #include <argp.h>
 #include <wiringPi.h>
 #include "system.h"
@@ -44,8 +45,6 @@
 # define _(Text) Text
 #endif
 #define N_(Text) Text
-
-#define actions_path(path) "/var/www/html/data/" #path
 
 static error_t parse_opt (int key, char *arg, struct argp_state *state);
 static void show_version (FILE *stream, struct argp_state *state);
@@ -78,17 +77,19 @@ main (int argc, char **argv)
 {
   textdomain(PACKAGE);
   argp_parse(&argp, argc, argv, 0, NULL, NULL);
+  wiringPiSetup();
   
   // Initialize vars
   bool isRunning = true;
   unsigned int i, j;
 
   // Initialize the automaton
+  printf("Initializing automaton... ");
   Automaton *a = automaton_new(2);
   
   automaton_set_pump_output(a, 24);
-  automaton_set_water_volume_input(12);
-  automaton_set_water_level_input(15);
+  automaton_set_water_volume_input(a, 12);
+  automaton_set_water_level_input(a, 15);
   
   automaton_set_lamp_output(a, 0, 16);
   automaton_set_valve_output(a, 0, 18);
@@ -96,49 +97,136 @@ main (int argc, char **argv)
   automaton_set_lamp_output(a, 1, 22);
   automaton_set_valve_output(a, 1, 7);
   
+  printf("Initialization complete.\n");
+  
   // 
   while(isRunning)
   {
       // Does the user want something to be done?
       for(i = 0, j = automaton_get_zones_number(a); i < j; i++)
       {
+          // Initialize paths
+          char *lampOffPath = actions_path("lamp", i + 1, "off");
+          char *lampOnPath = actions_path("lamp", i + 1, "on");
+          // char *valveOffPath = actions_path("valve", i + 1, "off");
+          char *valveOnPath = actions_path("valve", i + 1, "on");
+          
           // Turn off a lamp
-          if(is_file(actions_path(lamp, i, off)))
+          if(is_file(lampOffPath))
           {
+              // Log action
+              printf("Turning off lamp #%u.\n", i + 1);
+                
               // Turn down the pin output
               automaton_set_lamp_value(a, i, LOW);
               
               // Get rid of the file
-              unlink(actions_path(lamp, i, off));
+              unlink(lampOffPath);
           }
           // Turn of a lamp
-          else if(is_file(actions_path(lamp, i, on)))
+          else if(is_file(lampOnPath))
           {
+              // Log action
+              printf("Turning on lamp #%u.\n", i + 1);
+              
               // Turn up the pin output
               automaton_set_lamp_value(a, i, HIGH);
               
               // Get rid of the file
-              unlink(actions_path(lamp, i, on));
+              unlink(lampOnPath);
           }
           // Close a valve
-          else if(is_file(actions_path(valve, i, off)))
+          /*
+          else if(is_file(valveOffPath))
           {
+              // Log action
+              printf("Closing valve #%u.\n", i + 1);
+              
               // Turn down the pin output
               automaton_set_valve_value(a, i, LOW);
               
               // Get rid of the file
-              unlink(actions_path(valve, i, off));
+              unlink(valveOffPath);
           }
+          */
+          
           // Open a valve
-          else if(is_file(actions_path(valve, i, on)))
+          if(is_file(valveOnPath))
           {
-              // Turn up the pin output
-              automaton_set_valve_value(a, i, HIGH);
+              // Log action
+              printf("Trying to open valve #%u.\n", i + 1);
+              
+              if(automaton_read_water_level(a) == LOW)
+              {
+                  // Open valve file
+                  FILE *handle = fopen(valveOnPath, "r");
+                  
+                  if(handle != NULL)
+                  {
+                      // Read wanted water volume
+                      unsigned int wantedWaterVolume = 0, currentWaterVolume = 0;
+                      int previousOutput = 0, currentOutput;
+                      
+                      fscanf(handle, "%u", &wantedWaterVolume);
+                      fclose(handle);
+                      
+                      // Turn up the valve's pin output
+                      automaton_set_valve_value(a, i, HIGH);
+                      
+                      // Turn up the pump's pin output
+                      automaton_set_pump_value(a, HIGH);
+                      
+                      do
+                      {
+                          printf("Water volume: %u / %u\n", currentWaterVolume, wantedWaterVolume);
+                          
+                          currentOutput = automaton_read_water_volume(a);
+                          
+                          if(previousOutput != currentOutput)
+                          {
+                              previousOutput = currentOutput;
+                              
+                              if(currentOutput == HIGH)
+                              {
+                                  currentWaterVolume++;
+                              }
+                          }
+                          
+                          // Sleep so as not to overload the processor
+                          struct timespec ts;
+                          ts.tv_sec = 0.5;
+                          ts.tv_nsec = 0;
+                          
+                          nanosleep(&ts, NULL);
+                      }
+                      while(currentWaterVolume < wantedWaterVolume);
+                      
+                      automaton_set_pump_value(a, LOW);
+                      automaton_set_valve_value(a, i, LOW);
+                  }
+                  else
+                  {
+                      fprintf(stderr, "Can't open file \"%s\".\n", valveOnPath);
+                  }
+              }
+              else
+              {
+                fprintf(stderr, "Not enough water to hydrate zone #%u.\n", i + 1);
+              }
               
               // Get rid of the file
-              unlink(actions_path(valve, i, on));
+              unlink(valveOnPath);
           }
+          
+          // Free paths memory
+          free(lampOffPath);
+          free(lampOnPath);
+          // free(valveOffPath);
+          free(valveOnPath);
       }
+      
+      // Dump current automaton's state
+      automaton_dump_state(a, "/var/www/html/data/automaton.ini");
       
 #ifdef HAVE_UNISTD_H
       sleep(1);
@@ -146,6 +234,7 @@ main (int argc, char **argv)
   }
   
   // Destroy the automaton so as to free the memory
+  printf("Destroying automaton.\n");
   automaton_destroy(&a);
 
   return EXIT_SUCCESS;
