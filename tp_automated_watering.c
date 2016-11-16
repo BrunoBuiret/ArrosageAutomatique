@@ -102,14 +102,22 @@ main (int argc, char **argv)
   // 
   while(isRunning)
   {
+      printf("while()\n");
+
       // Does the user want something to be done?
       for(i = 0, j = automaton_get_zones_number(a); i < j; i++)
       {
+          printf("for(%u / %u)\n", i, j);
+
           // Initialize paths
           char *lampOffPath = actions_path("lamp", i + 1, "off");
           char *lampOnPath = actions_path("lamp", i + 1, "on");
           // char *valveOffPath = actions_path("valve", i + 1, "off");
           char *valveOnPath = actions_path("valve", i + 1, "on");
+
+          printf("lampOffPath: %s\n", lampOffPath);
+          printf("lampOnPath: %s\n", lampOnPath);
+          printf("valveOnPath: %s\n", valveOnPath);
           
           // Turn off a lamp
           if(is_file(lampOffPath))
@@ -225,6 +233,8 @@ main (int argc, char **argv)
           free(lampOnPath);
           // free(valveOffPath);
           free(valveOnPath);
+
+          printf("endfor(%u / %u)\n", i, j);
       }
       
       // Dump current automaton's state
