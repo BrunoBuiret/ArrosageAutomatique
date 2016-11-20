@@ -46,18 +46,18 @@
 #endif
 #define N_(Text) Text
 
-static error_t parse_opt (int key, char *arg, struct argp_state *state);
-static void show_version (FILE *stream, struct argp_state *state);
+static error_t parse_opt(int key, char *arg, struct argp_state *state);
+static void show_version(FILE *stream, struct argp_state *state);
 
 /* argp option keys */
-enum {DUMMY_KEY=129
-};
+enum {DUMMY_KEY=129};
 
 /* Option flags and variables.  These are initialized in parse_opt.  */
-
+int want_verbose; // --verbose
 
 static struct argp_option options[] =
 {
+  { "verbose", 'v', NULL, 0, N_("Print more information"), 0 },
   { NULL, 0, NULL, 0, NULL, 0 }
 };
 
@@ -67,13 +67,10 @@ void (*argp_program_version_hook) (FILE *, struct argp_state *) = show_version;
 
 static struct argp argp =
 {
-  options, parse_opt, N_("[FILE...]"),
-  N_(""),
-  NULL, NULL, NULL
+  options, parse_opt, N_("[FILE...]"), N_(""), NULL, NULL, NULL
 };
 
-int
-main (int argc, char **argv)
+int main(int argc, char **argv)
 {
   textdomain(PACKAGE);
   argp_parse(&argp, argc, argv, 0, NULL, NULL);
@@ -99,25 +96,16 @@ main (int argc, char **argv)
   
   printf("Initialization complete.\n");
   
-  // 
+  // Algorithm loop
   while(isRunning)
   {
-      printf("while()\n");
-
       // Does the user want something to be done?
       for(i = 0, j = automaton_get_zones_number(a); i < j; i++)
       {
-          printf("for(%u / %u)\n", i, j);
-
           // Initialize paths
           char *lampOffPath = actions_path("lamp", i + 1, "off");
           char *lampOnPath = actions_path("lamp", i + 1, "on");
-          // char *valveOffPath = actions_path("valve", i + 1, "off");
-          char *valveOnPath = actions_path("valve", i + 1, "on");
-
-          printf("lampOffPath: %s\n", lampOffPath);
-          printf("lampOnPath: %s\n", lampOnPath);
-          printf("valveOnPath: %s\n", valveOnPath);
+          char *valvePath = actions_path("valve", i + 1, NULL);
           
           // Turn off a lamp
           if(is_file(lampOffPath))
@@ -143,32 +131,17 @@ main (int argc, char **argv)
               // Get rid of the file
               unlink(lampOnPath);
           }
-          // Close a valve
-          /*
-          else if(is_file(valveOffPath))
-          {
-              // Log action
-              printf("Closing valve #%u.\n", i + 1);
-              
-              // Turn down the pin output
-              automaton_set_valve_value(a, i, LOW);
-              
-              // Get rid of the file
-              unlink(valveOffPath);
-          }
-          */
           
           // Open a valve
-          if(is_file(valveOnPath))
+          if(is_file(valvePath))
           {
               // Log action
               printf("Trying to open valve #%u.\n", i + 1);
               
-              /*
               if(automaton_read_water_level(a) == LOW)
               {
                   // Open valve file
-                  FILE *handle = fopen(valveOnPath, "r");
+                  FILE *handle = fopen(valvePath, "r");
                   
                   if(handle != NULL)
                   {
@@ -215,26 +188,22 @@ main (int argc, char **argv)
                   }
                   else
                   {
-                      fprintf(stderr, "Can't open file \"%s\".\n", valveOnPath);
+                      fprintf(stderr, "Can't open file \"%s\".\n", valvePath);
                   }
               }
               else
               {
                 fprintf(stderr, "Not enough water to hydrate zone #%u.\n", i + 1);
               }
-              */
               
               // Get rid of the file
-              unlink(valveOnPath);
+              unlink(valvePath);
           }
           
           // Free paths memory
           free(lampOffPath);
           free(lampOnPath);
-          // free(valveOffPath);
-          free(valveOnPath);
-
-          printf("endfor(%u / %u)\n", i, j);
+          free(valvePath);
       }
       
       // Dump current automaton's state
@@ -253,30 +222,35 @@ main (int argc, char **argv)
 }
 
 /* Parse a single option.  */
-static error_t
-parse_opt (int key, char *arg, struct argp_state *state)
+static error_t parse_opt(int key, char *arg, struct argp_state *state)
 {
   switch (key)
-    {
+  {
     case ARGP_KEY_INIT:
-      /* Set up default values.  */
+      /* Set up default values. */
+      want_verbose = 0;
+      break;
+      
+    case 'v':
+      /* --verbose */
+      want_verbose = 1;
       break;
 
-
-    case ARGP_KEY_ARG:		/* [FILE]... */
+    case ARGP_KEY_ARG:
+      /* [FILE]... */
       /* TODO: Do something with ARG, or remove this case and make
          main give argp_parse a non-NULL fifth argument.  */
       break;
 
     default:
       return ARGP_ERR_UNKNOWN;
-    }
+  }
+  
   return 0;
 }
 
 /* Show the version number and copyright information.  */
-static void
-show_version (FILE *stream, struct argp_state *state)
+static void show_version(FILE *stream, struct argp_state *state)
 {
   (void) state;
   /* Print in small parts whose localizations can hopefully be copied

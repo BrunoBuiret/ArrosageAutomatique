@@ -36,16 +36,20 @@ char* actions_path(const char *type, unsigned int i, const char *action)
         strlen("/var/www/html/data/") +
         strlen(type) +
         strlen(number) +
-        sizeof(char) +
-        strlen(action) +
+        (action != NULL ? sizeof(char) + strlen(action) : 0) +
         strlen(".txt")
     );
     
     strcpy(path, "/var/www/html/data/");
     strcat(path, type);
     strcat(path, number);
-    strcat(path, "_");
-    strcat(path, action);
+    
+    if(action != NULL)
+    {
+        strcat(path, "_");
+        strcat(path, action);
+    }
+    
     strcat(path, ".txt");
     
     free(number);
