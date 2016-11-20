@@ -138,6 +138,7 @@ int main(int argc, char **argv)
                 // Log action
                 print_log("Trying to open valve #%u.", i + 1);
 
+                /*
                 if(automaton_read_water_level(a) == LOW)
                 {
                     // Open valve file
@@ -181,7 +182,8 @@ int main(int argc, char **argv)
 
                             nanosleep(&ts, NULL);
                         }
-                        while(/*currentWaterVolume < wantedWaterVolume*/false);
+                        while(false);
+                        //while(currentWaterVolume < wantedWaterVolume);
 
                         automaton_set_pump_value(a, LOW);
                         automaton_set_valve_value(a, i, LOW);
@@ -195,6 +197,7 @@ int main(int argc, char **argv)
                 {
                     fprintf(stderr, "Not enough water to hydrate zone #%u.\n", i + 1);
                 }
+                */
 
                 // Get rid of the file
                 unlink(valvePath);
