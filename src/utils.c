@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <stdarg.h>
 #include <math.h>
+#include <time.h>
 #include "utils.h"
 #include "config.h"
 #include "src/xmalloc.h"
@@ -87,8 +88,8 @@ void print_log(const char *format, ...)
         va_list ap;
 
         va_start(ap, format);
-        printf("[%2d-%2d-%4d %2d:%2d:%2d] ",
-            tm.tm_mday, tm.tm_mon + 1, tm.tm_year,
+        printf("[%02d-%02d-%d %02d:%02d:%02d] ",
+            tm.tm_mday, tm.tm_mon + 1, 1900 + tm.tm_year,
             tm.tm_hour, tm.tm_min, tm.tm_sec
         );
         vprintf(format, ap);

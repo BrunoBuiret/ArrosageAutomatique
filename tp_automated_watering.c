@@ -80,7 +80,7 @@ int main(int argc, char **argv)
     unsigned int i, j;
     
     // Initialize the automaton
-    print_log("Initializing automaton... ");
+    print_log("Initializing automaton. ");
   
     Automaton *a = automaton_new(2);
 

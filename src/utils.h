@@ -9,6 +9,8 @@
 
 #include <stdbool.h>
 
+extern int want_verbose;
+
 /**
  * Tests if a file exists or not.
  * 
