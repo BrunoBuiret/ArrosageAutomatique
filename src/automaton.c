@@ -4,7 +4,6 @@
  * @author Alexis Rabilloud <alexis.rabilloud@etu.univ-lyon1.fr>
  * @version 1.0
  */
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>

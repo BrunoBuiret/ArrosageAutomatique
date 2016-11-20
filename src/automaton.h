@@ -4,7 +4,6 @@
  * @author Alexis Rabilloud <alexis.rabilloud@etu.univ-lyon1.fr>
  * @version 1.0
  */
-
 #ifndef AUTOMATON_H
 #define AUTOMATON_H
 

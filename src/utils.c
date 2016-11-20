@@ -1,7 +1,14 @@
+/* 
+ * @author Thomas Arnaud <thomas.arnaud@etu.univ-lyon1.fr>
+ * @author Bruno Buiret <bruno.buiret@etu.univ-lyon1.fr>
+ * @author Alexis Rabilloud <alexis.rabilloud@etu.univ-lyon1.fr>
+ * @version 1.0
+ */
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdarg.h>
 #include <math.h>
 #include "utils.h"
 #include "config.h"
@@ -9,6 +16,7 @@
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#include <time.h>
 #endif
 
 bool is_file(const char *path)
@@ -29,14 +37,14 @@ bool is_file(const char *path)
 #endif
 }
 
-char* actions_path(const char *type, unsigned int i, const char *action)
+char* actions_path(const char *type, unsigned int i, const char *option)
 {
     char *number = uint_to_string(i);
     char *path = (char*) xmalloc(
         strlen("/var/www/html/data/") +
         strlen(type) +
         strlen(number) +
-        (action != NULL ? sizeof(char) + strlen(action) : 0) +
+        (option != NULL ? sizeof(char) + strlen(option) : 0) +
         strlen(".txt")
     );
     
@@ -44,10 +52,10 @@ char* actions_path(const char *type, unsigned int i, const char *action)
     strcat(path, type);
     strcat(path, number);
     
-    if(action != NULL)
+    if(option != NULL)
     {
         strcat(path, "_");
-        strcat(path, action);
+        strcat(path, option);
     }
     
     strcat(path, ".txt");
@@ -68,4 +76,23 @@ char* uint_to_string(unsigned int input)
     sprintf(output, "%u", input);
     
     return output;
+}
+
+void print_log(const char *format, ...)
+{
+    if(want_verbose)
+    {
+        time_t t = time(NULL);
+        struct tm tm = *localtime(&t);
+        va_list ap;
+
+        va_start(ap, format);
+        printf("[%2d-%2d-%4d %2d:%2d:%2d] ",
+            tm.tm_mday, tm.tm_mon + 1, tm.tm_year,
+            tm.tm_hour, tm.tm_min, tm.tm_sec
+        );
+        vprintf(format, ap);
+        printf("\n");
+        va_end(ap);
+    }
 }
